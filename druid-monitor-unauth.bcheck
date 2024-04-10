@@ -1,0 +1,21 @@
+metadata:
+    language: v2-beta
+    name: "druid-monitor-unauth"
+    description: "系统存在druid-monitor-unauth"
+    author: "hugh"
+    tags: "druid", "unauth", "active"
+
+define:
+    potential_path = "druid/basic.json"
+
+given request then
+    send request:
+        replacing path: `{regex_replace({base.request.url}, "^http[s]?://[^/]+(/[^/]+/).*", "$1")}{potential_path}`
+
+    if "com.alibaba.druid.proxy.DruidDriver" in {latest.response} then
+        report issue:
+            severity: medium
+            confidence: tentative
+            remediation: "对druid接口进行访问限制或者添加鉴权"
+            detail: `系统存在druid-monitor-unauth`
+    end if
