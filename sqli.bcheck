@@ -1,0 +1,95 @@
+metadata:
+    language: v2-beta
+    name: "SQL注入漏洞"
+    description: "网站很大可能存在sql注入漏洞，请进一步测试"
+    author: "hugh"
+    tags: "Sqli,active"
+
+run for each:
+    payload =
+        "'",
+        "\""
+
+given any insertion point then
+    if not("Fatal error" in {latest.response})
+    or not("ORA-\d{5}" in {latest.response}) 
+    or not("SQL syntax.*?MySQL" in {latest.response}) 
+    or not("Unknown column" in {latest.response}) 
+    or not("Syntax error" in {latest.response}) 
+    or not("附近有语法错误" in {latest.response}) 
+    or not("java.sql.SQLException" in {latest.response}) 
+    or not("System.Exception: SQL Execution Error!" in {latest.response}) 
+    or not("com.mysql.jdbc" in {latest.response}) 
+    or not("MySQLSyntaxErrorException" in {latest.response}) 
+    or not("valid MySQL result" in {latest.response})
+    or not("your MySQL server version" in {latest.response}) 
+    or not("MySqlClient" in {latest.response}) 
+    or not("MySqlException" in {latest.response}) 
+    or not("java.sql.SQLSyntaxErrorException" in {latest.response}) 
+    or not("Error SQL:" in {latest.response}) 
+    or not("引号不完整" in {latest.response}) 
+    or not("valid PostgreSQL result" in {latest.response}) 
+    or not("PG::SyntaxError:" in {latest.response}) 
+    or not("org.postgresql.jdbc" in {latest.response}) 
+    or not("PSQLException" in {latest.response})
+    or not("Microsoft SQL Native Client error" in {latest.response})
+    or not("ODBC SQL Server Driver" in {latest.response})
+    or not("SQLServer JDBC Driver" in {latest.response})
+    or not("com.jnetdirect.jsql" in {latest.response})
+    or not("macromedia.jdbc.sqlserver" in {latest.response})
+    or not("com.microsoft.sqlserver.jdbc" in {latest.response})
+    or not("Microsoft Access" in {latest.response})
+    or not("Access Database Engine" in {latest.response})
+    or not("ODBC Microsoft Access" in {latest.response})
+    or not("Oracle error" in {latest.response})
+    or not("DB2 SQL error" in {latest.response})
+    or not("SQLite error" in {latest.response})
+    or not("Sybase message" in {latest.response})
+    or not("SybSQLException" in {latest.response}) then
+        send payload:
+            appending: {payload}
+
+        if "Fatal error" in {latest.response}
+    or ("ORA-\d{5}" in {latest.response}) 
+    or ("SQL syntax.*?MySQL" in {latest.response}) 
+    or ("Unknown column" in {latest.response}) 
+    or ("Syntax error" in {latest.response}) 
+    or ("附近有语法错误" in {latest.response}) 
+    or ("java.sql.SQLException" in {latest.response}) 
+    or ("System.Exception: SQL Execution Error!" in {latest.response}) 
+    or ("com.mysql.jdbc" in {latest.response}) 
+    or ("MySQLSyntaxErrorException" in {latest.response}) 
+    or ("valid MySQL result" in {latest.response})
+    or ("your MySQL server version" in {latest.response}) 
+    or ("MySqlClient" in {latest.response}) 
+    or ("MySqlException" in {latest.response}) 
+    or ("java.sql.SQLSyntaxErrorException" in {latest.response}) 
+    or ("Error SQL:" in {latest.response}) 
+    or ("引号不完整" in {latest.response}) 
+    or ("valid PostgreSQL result" in {latest.response}) 
+    or ("PG::SyntaxError:" in {latest.response}) 
+    or ("org.postgresql.jdbc" in {latest.response}) 
+    or ("PSQLException" in {latest.response})
+    or ("Microsoft SQL Native Client error" in {latest.response})
+    or ("ODBC SQL Server Driver" in {latest.response})
+    or ("SQLServer JDBC Driver" in {latest.response})
+    or ("com.jnetdirect.jsql" in {latest.response})
+    or ("macromedia.jdbc.sqlserver" in {latest.response})
+    or ("com.microsoft.sqlserver.jdbc" in {latest.response})
+    or ("Microsoft Access" in {latest.response})
+    or ("Access Database Engine" in {latest.response})
+    or ("ODBC Microsoft Access" in {latest.response})
+    or ("Oracle error" in {latest.response})
+    or ("DB2 SQL error" in {latest.response})
+    or ("SQLite error" in {latest.response})
+    or ("Sybase message" in {latest.response})
+    or ("SybSQLException" in {latest.response}) then
+
+            report issue:
+                severity: high
+                confidence: tentative
+                detail: "sql注入漏洞，需要对用户的输入进行过滤或者转义以此来修复漏洞"
+                remediation: "报错型sql注入"
+        end if
+    end if
+        
